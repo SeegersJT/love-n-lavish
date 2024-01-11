@@ -7,7 +7,7 @@ module.exports = handleErrors(async (request, response, next) => {
     const tokenHeader = request.headers.authorization;
 
     if (!tokenHeader) {
-        throw { code: 401, message: "Unauthorized Request." };
+        throw { status: 401, message: "Unauthorized Request." };
     }
 
     const token = tokenHeader.split(" ")[1];

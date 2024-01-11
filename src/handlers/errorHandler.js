@@ -26,7 +26,6 @@ const handleErrors = (fn) => async (request, response, next) => {
     try {
         await fn(request, response, next);
     } catch (error) {
-        console.log(error)
         const errorHandler = errorMessages[error.code] || defaultErrorHandler;
         const { status, message } = errorHandler(error);
 

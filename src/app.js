@@ -16,8 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(corsHandler);
 
-app.use("", homeRoutes);
-app.use("/auth", authRoutes);
-app.use("/dashboard", dashboardRoutes); // authentication endpoints
+app.use("/api/", homeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes); // authentication endpoints
 
 module.exports = app;

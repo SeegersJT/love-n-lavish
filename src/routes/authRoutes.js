@@ -13,7 +13,7 @@ const hashPassword = async (password) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         return hashedPassword;
     } catch (error) {
-        throw { code: 500, message: "Password hashing failed" };
+        throw { status: 500, message: "Password hashing failed" };
     }
 };
 
@@ -22,7 +22,7 @@ const comparePassword = async (password, dbPassword) => {
         const comparePassword = await bcrypt.compare(password, dbPassword);
 
         if (!comparePassword) {
-            throw { code: 401, message: "Incorrect Username or Password" };
+            throw { status: 401, message: "Incorrect Username or Password" };
         }
 
         return comparePassword;
@@ -46,7 +46,7 @@ const getUser = async (email) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            throw { code: 401, message: "Incorrect Username or Password" };
+            throw { status: 401, message: "Incorrect Username or Password" };
         }
 
         return user;
@@ -54,6 +54,17 @@ const getUser = async (email) => {
         throw error; // Let the custom error handler deal with it
     }
 };
+
+const getCredentials = async (authorization) => {
+    if (!authorization) {
+        throw { status: 401, message: "No Authorization Header" };
+    }
+
+    const base64Credentials = authorization.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+
+    return credentials.split(':');
+}
 
 const generateToken = (userId, userEmail) => {
     try {
@@ -66,7 +77,7 @@ const generateToken = (userId, userEmail) => {
             { expiresIn: "24h" }
         );
     } catch (error) {
-        throw { code: 500, message: "Token generation failed" };
+        throw { status: 500, message: "Token generation failed" };
     }
 };
 
@@ -81,8 +92,9 @@ router.post("/register", handleErrors(async (request, response) => {
 }));
 
 router.post("/login", handleErrors(async (request, response) => {
-    const user = await getUser(request.body.email);
-    await comparePassword(request.body.password, user.password);
+    const [ email, password ] = await getCredentials(request.headers.authorization);
+    const user = await getUser(email);
+    await comparePassword(password, user.password);
 
     const token = generateToken(user._id, user.email);
 
