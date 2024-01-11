@@ -13,7 +13,7 @@ const errorMessages = {
     }),
     11000: (error) => ({
         status: 400,
-        message: `Duplicate key error. ${error.keyValue.email} already exists. Please choose a different email.`,
+        message: `${error.keyValue.email} already exists. Please choose a different email.`,
     }),
 };
 

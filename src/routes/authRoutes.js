@@ -86,20 +86,20 @@ router.post("/register", handleErrors(async (request, response) => {
     const result = await createUser(request.body.email, hashedPassword);
 
     response.status(201).send({
-        message: "User Created Successfully",
+        message: "Successfully Registered User.",
         result,
     });
 }));
 
 router.post("/login", handleErrors(async (request, response) => {
-    const [ email, password ] = await getCredentials(request.headers.authorization);
+    const [email, password] = await getCredentials(request.headers.authorization);
     const user = await getUser(email);
     await comparePassword(password, user.password);
 
     const token = generateToken(user._id, user.email);
 
     response.status(200).send({
-        message: "Login Successful",
+        message: "Welcome to Love & Lavish",
         email: user.email,
         token,
     });
